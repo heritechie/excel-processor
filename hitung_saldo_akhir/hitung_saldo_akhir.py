@@ -121,12 +121,13 @@ def get_saldo_akhir(input_df, params):
 
 
 # Program Utama
-inputdf, paramsdf = load_excel_from_local()
-params = get_params_from_df(paramsdf)
-outputdf = inputdf.copy()
-for index, row in outputdf.iterrows():
-  if (row['UsiaAkhir'] is not pd.NaT):
-    saldo_akhir = get_saldo_akhir(row, params)
-    outputdf.loc[index, 'SaldoAkhir'] = saldo_akhir
+if __name__ == '__main__':
+  inputdf, paramsdf = load_excel_from_local()
+  params = get_params_from_df(paramsdf)
+  outputdf = inputdf.copy()
+  for index, row in outputdf.iterrows():
+    if (row['UsiaAkhir'] is not pd.NaT):
+      saldo_akhir = get_saldo_akhir(row, params)
+      outputdf.loc[index, 'SaldoAkhir'] = saldo_akhir
 
-save_to_local(outputdf)
+  save_to_local(outputdf)
