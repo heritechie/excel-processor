@@ -5,27 +5,9 @@ import numpy as np
 
 INPUT_FILENAME = 'input.xlsx'
 OUTPUT_FILENAME = 'output.xlsx'
-GDRIVE_FOLDER_PATH = 'Colab Notebooks'
-
-def load_excel_from_gdrive():
-  from google.colab import drive
-
-  drive.mount('/content/drive')
-  path = '/content/drive/MyDrive/' + GDRIVE_FOLDER_PATH + '/' + INPUT_FILENAME
-  return pd.read_excel(path, sheet_name=0), pd.read_excel(path, sheet_name=1)
-
-def save_to_gdrive(output_df):
-  from google.colab import drive 
-
-  drive.mount('/content/drive')
-  path = '/content/drive/MyDrive/' + GDRIVE_FOLDER_PATH + '/' + OUTPUT_FILENAME
-  
-  with pd.ExcelWriter(path) as writer:      
-    output_df.to_excel(writer, sheet_name='Output', index=False)  
 
 def load_excel_from_local():
   return pd.read_excel(INPUT_FILENAME, sheet_name=0), pd.read_excel(INPUT_FILENAME, sheet_name=1)
-
 
 def save_to_local(output_df):
   with pd.ExcelWriter(OUTPUT_FILENAME) as writer:
@@ -89,7 +71,6 @@ def init_data_awal(input_df, params):
   dt['NaikGaji'] = get_naik_gaji(dt['Tanggal'], params['BulanNaikGaji'])
   dt['KenaikanGaji'] = get_kenaikan_gaji(dt['NaikGaji'], params['PersenKenaikanGaji'])
   update_data(dt, params)
-
   return [dt]
 
 def get_saldo_akhir(input_df, params):
@@ -97,12 +78,10 @@ def get_saldo_akhir(input_df, params):
   usia_awal = arr_dt[0]['Usia']
   i = arr_dt[0]['No']
   usia = usia_awal
-  
   while(usia < input_df['UsiaAkhir']):
     last_el = arr_dt[i-1]
     usia = usia_awal + (i) / 12
     i += 1
-
     dt = {     
       'No': i,     
       'Tanggal': eomonth(arr_dt[0]['Tanggal'], (i-1)),
@@ -112,15 +91,11 @@ def get_saldo_akhir(input_df, params):
     dt['NaikGaji'] = get_naik_gaji(dt['Tanggal'], params['BulanNaikGaji'])
     dt['KenaikanGaji'] = get_kenaikan_gaji(dt['NaikGaji'], params['PersenKenaikanGaji'])
     dt['Gaji'] = last_el['Gaji'] + (last_el['Gaji'] * dt['KenaikanGaji'])
-    
     update_data(dt, params)
     arr_dt.append(dt)
-
   saldo_akhir = arr_dt[-1]['SaldoAkhir']
   return '' if math.isnan(saldo_akhir) else round(saldo_akhir)
 
-
-# Program Utama
 if __name__ == '__main__':
   inputdf, paramsdf = load_excel_from_local()
   params = get_params_from_df(paramsdf)
@@ -129,5 +104,4 @@ if __name__ == '__main__':
     if (row['UsiaAkhir'] is not pd.NaT):
       saldo_akhir = get_saldo_akhir(row, params)
       outputdf.loc[index, 'SaldoAkhir'] = saldo_akhir
-
   save_to_local(outputdf)
