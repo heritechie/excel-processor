@@ -2,14 +2,17 @@
 Simple excel processor app
 
 
-## Install project dependency
-
+## Change directory
 ```bash
-pip install -r requirement.txt
+cd hitung_saldo_akhir
+```
+
+## Install project dependency
+```bash
+pip install -r requirements.txt
 ```
 
 ## Run program
 ```bash
-cd hitung_saldo_akhir
 python hitung_saldo_akhir.py
 ```
